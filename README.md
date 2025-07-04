@@ -1,79 +1,236 @@
-# File Explorer Servlet Project
+# File Explorer Servlet
 
-## Overview
-This Java Servlet project provides a simple web-based file explorer application. It allows users to browse server directories, view files, and sort files by name, size, type, or last modified date.
+A Java servlet-based web application that provides a file browser interface for exploring directories and files on the server.
 
-## Prerequisites
-- Java JDK 8 or later installed
+## 🚀 Features
+
+- **Directory Navigation**: Browse through folders with breadcrumb navigation
+- **File Listing**: View files and directories with details (size, modification date)
+- **Responsive Design**: Clean, modern interface that works on desktop and mobile
+- **File Type Icons**: Visual indicators for different file types
+- **Parent Directory Navigation**: Easy navigation back to parent directories
+- **Safe Browsing**: Restricted to designated base directory for security
+
+## 📋 Prerequisites
+
+- Java JDK 8 or later
 - Apache Tomcat 9 or higher
-- Servlet API `javax.servlet-api-4.0.1.jar` (used for compiling)
+- `javax.servlet-api-4.0.1.jar` (Servlet API)
 - Git (optional, for version control)
 
-## Setup and Deployment
+## 🏗️ Project Structure
 
-### 1. Compile the Servlet
+```
+fileexplorer/
+├── src/
+│   └── FileExplorerServlet.java
+├── WEB-INF/
+│   ├── classes/
+│   │   └── FileExplorerServlet.class
+│   └── web.xml
+├── files/
+│   ├── documents/
+│   ├── images/
+│   └── sample.txt
+├── css/
+│   └── styles.css
+├── README.md
+└── .gitignore
+```
 
-Download or locate the Servlet API jar (`javax.servlet-api-4.0.1.jar`).  
-Compile your servlet with this jar in the classpath:
+## 🛠️ Installation and Setup
+
+### Step 1: Clone or Download
 
 ```bash
-javac -cp /path/to/javax.servlet-api-4.0.1.jar FileExplorerServlet.java
+git clone https://github.com/yourusername/fileexplorer-servlet.git
+cd fileexplorer-servlet
+```
 
-2. Prepare your project structure
+### Step 2: Compile the Servlet
 
-Your project directory should contain:
+```bash
+javac -cp /path/to/javax.servlet-api-4.0.1.jar src/FileExplorerServlet.java
+```
 
-    WEB-INF/web.xml (your servlet deployment descriptor)
+> **Note**: Replace `/path/to/javax.servlet-api-4.0.1.jar` with the actual path to your servlet API jar file.
 
-    WEB-INF/classes/FileExplorerServlet.class (compiled servlet class)
+### Step 3: Create Directory Structure
 
-    Other static files or folders as needed (e.g., a files directory with content to browse)
+Create the web application directory structure:
 
-3. Package as WAR file
+```bash
+mkdir -p WEB-INF/classes
+mkdir -p files
+mkdir -p css
+```
 
-From your project root (where WEB-INF folder is), create a WAR file:
+### Step 4: Copy Compiled Class
 
+```bash
+cp src/FileExplorerServlet.class WEB-INF/classes/
+```
+
+### Step 5: Create Configuration Files
+
+Create `WEB-INF/web.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+
+  <servlet>
+    <servlet-name>FileExplorer</servlet-name>
+    <servlet-class>FileExplorerServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>FileExplorer</servlet-name>
+    <url-pattern>/explorer</url-pattern>
+  </servlet-mapping>
+
+</web-app>
+```
+
+### Step 6: Add Sample Files
+
+Create some sample files in the `files/` directory:
+
+```bash
+mkdir files/documents files/images
+echo "Hello World!" > files/sample.txt
+echo "This is a document" > files/documents/readme.txt
+```
+
+### Step 7: Package as WAR
+
+```bash
 jar -cvf fileexplorer.war *
+```
 
-4. Deploy the WAR file to Tomcat
+### Step 8: Deploy to Tomcat
 
-Copy fileexplorer.war to Tomcat’s webapps directory:
-
+```bash
 sudo cp fileexplorer.war /path/to/tomcat/webapps/
+```
 
-5. Start or restart Tomcat
+### Step 9: Restart Tomcat
 
+```bash
 sudo systemctl restart tomcat
+# or
+sudo service tomcat restart
+```
 
-6. Access the application
+## 🌐 Usage
 
-Open your browser and visit:
+1. Open your web browser
+2. Navigate to: `http://localhost:8080/fileexplorer/`
+3. Browse through the files and directories
+4. Click on folders to navigate into them
+5. Use the breadcrumb navigation to move back up the directory tree
 
-http://localhost:8080/fileexplorer/
+## 🔧 Configuration
 
-You should see the file explorer interface.
-GitHub Integration
-Initialize Git repository
+### Changing the Base Directory
 
-git init
+To change the base directory that the servlet browses, modify the `BASE_PATH` constant in `FileExplorerServlet.java`:
 
-Add project files
+```java
+private static final String BASE_PATH = "your-custom-directory";
+```
 
-git add .
+### Customizing the UI
 
-Commit your changes
+The application includes CSS styling in `css/styles.css`. You can modify this file to customize the appearance:
 
-git commit -m "Initial commit - File Explorer Servlet"
+- Colors and themes
+- Font sizes and families
+- Layout and spacing
+- Responsive breakpoints
 
-Create a GitHub repository
+## 📁 File Structure Details
 
-    Go to https://github.com and create a new repository (e.g., fileexplorer-servlet).
+- **`src/`**: Source code directory
+- **`WEB-INF/`**: Web application configuration and compiled classes
+- **`files/`**: Default directory for file browsing (can be customized)
+- **`css/`**: Stylesheets for the web interface
 
-Link your local repo to GitHub
+## 🔒 Security Considerations
 
-git remote add origin https://github.com/yourusername/fileexplorer-servlet.git
+- The servlet is restricted to browse only within the designated base directory
+- No file upload or modification capabilities (read-only)
+- Path traversal attacks are prevented by proper path validation
+- Consider implementing authentication for production use
 
-Push your code to GitHub
+## 🐛 Troubleshooting
 
-git branch -M main
-git push -u origin main
+### Common Issues
+
+1. **ClassNotFoundException**: 
+   - Ensure the servlet API jar is in your classpath during compilation
+   - Verify the compiled class is in `WEB-INF/classes/`
+
+2. **404 Error**:
+   - Check that the WAR file is properly deployed
+   - Verify Tomcat is running and accessible
+
+3. **Permission Errors**:
+   - Ensure Tomcat has read permissions for the files directory
+   - Check file system permissions
+
+4. **Files Not Showing**:
+   - Verify the `files/` directory exists and contains files
+   - Check the BASE_PATH configuration
+
+### Debug Steps
+
+1. Check Tomcat logs: `tail -f /path/to/tomcat/logs/catalina.out`
+2. Verify deployment: List files in `webapps/fileexplorer/`
+3. Test servlet mapping: Check `web.xml` configuration
+
+## 🚀 Deployment Options
+
+### Local Development
+- Use the embedded Tomcat server for quick testing
+- Access via `http://localhost:8080/fileexplorer/`
+
+### Production Deployment
+- Use a reverse proxy (nginx/Apache) for better performance
+- Configure SSL/TLS for secure connections
+- Implement proper logging and monitoring
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature-name`
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+If you encounter any issues or have questions:
+
+1. Check the troubleshooting section above
+2. Review Tomcat and Java documentation
+3. Create an issue in the GitHub repository
+4. Contact the maintainers
+
+## 📚 Additional Resources
+
+- [Apache Tomcat Documentation](https://tomcat.apache.org/tomcat-9.0-doc/)
+- [Java Servlet Specification](https://javaee.github.io/servlet-spec/)
+- [Java File I/O Tutorial](https://docs.oracle.com/javase/tutorial/essential/io/)
+
+---
+
+**Made with ❤️ for the Java community**
