@@ -1,47 +1,39 @@
 #!/bin/bash
-
-# Stop script on any error
 set -e
 
-echo "📦 Compiling FileExplorerServlet.java ..."
-javac -cp javax.servlet-api-4.0.1.jar -d fileexplorer/WEB-INF/classes FileExplorerServlet.java 
+# Check SIGACS is set
+if [ -z "$SIGACS" ]; then
+  echo "❌ ERROR: SIGACS environment variable is not set."
+  exit 1
+fi
 
-# Check if class files were generated
+TOMCAT_HOME="$SIGACS/tomweb"
+WEBAPPS_DIR="$TOMCAT_HOME/webapps"
+
+echo "📦 Compiling FileExplorerServlet.java..."
+javac -cp javax.servlet-api-4.0.1.jar -d fileexplorer/WEB-INF/classes FileExplorerServlet.java
+
 if [ ! -f fileexplorer/WEB-INF/classes/FileExplorerServlet.class ]; then
-  echo "❌ Compilation failed: .class file(s) not found."
+  echo "❌ Compilation failed."
   exit 1
 fi
 echo "✅ Compilation successful."
 
-# === STEP 2: Build the WAR ===
-echo "🛠️  Building WAR file (fileexplorer.war)..."
+echo "🛠️ Building WAR file..."
 jar -cvf fileexplorer.war -C fileexplorer .
 
-# Verify image was included
-if ! jar tf fileexplorer.war | grep -q 'images/logototal.png'; then
-  echo "⚠️  Warning: Image logototal.png not found in WAR. Check your structure!"
-else
-  echo "✅ Image logototal.png included in WAR."
-fi
+echo "🛑 Stopping Tomcat..."
+$TOMCAT_HOME/bin/shutdown.sh || true
 
-# === STEP 3: Clean up old deployment ===
 echo "🧹 Removing old deployment..."
-sudo rm -rf /var/lib/tomcat/webapps/fileexplorer
+rm -rf "$WEBAPPS_DIR/fileexplorer"
 
-# === STEP 4: Deploy WAR to Tomcat ===
-echo "🚀 Copying WAR to Tomcat webapps directory..."
-sudo cp fileexplorer.war /var/lib/tomcat/webapps/
+echo "🚀 Deploying new WAR..."
+cp fileexplorer.war "$WEBAPPS_DIR/"
 
-# === STEP 5: Restart Tomcat ===
-echo "🔄 Restarting Tomcat..."
-sudo systemctl restart tomcat
+echo "🔁 Starting Tomcat..."
+$TOMCAT_HOME/bin/startup.sh
 
-# === DONE ===
-echo "✅ Deployment completed successfully."
-
-# === Access Links ===
-echo
-echo "🌐 You can now access your servlet and image here:"
-echo "  → Servlet: http://localhost:8081/fileexplorer/explorer"
-echo
+echo "✅ Deployment complete!"
+echo "🌐 Access your app at: http://localhost:8081/fileexplorer/explorer"
 
