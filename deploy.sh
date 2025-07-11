@@ -9,6 +9,8 @@ fi
 
 TOMCAT_HOME="$SIGACS/tomweb"
 WEBAPPS_DIR="$TOMCAT_HOME/webapps"
+WAR_NAME="hr-file-explorer.war"
+APP_DIR_NAME="hr-file-explorer"
 
 echo "📦 Compiling FileExplorerServlet.java..."
 javac -cp javax.servlet-api-4.0.1.jar -d fileexplorer/WEB-INF/classes FileExplorerServlet.java
@@ -20,20 +22,20 @@ fi
 echo "✅ Compilation successful."
 
 echo "🛠️ Building WAR file..."
-jar -cvf fileexplorer.war -C fileexplorer .
+jar -cvf $WAR_NAME -C fileexplorer .
 
 echo "🛑 Stopping Tomcat..."
 $TOMCAT_HOME/bin/shutdown.sh || true
 
 echo "🧹 Removing old deployment..."
-rm -rf "$WEBAPPS_DIR/fileexplorer"
+rm -rf "$WEBAPPS_DIR/$APP_DIR_NAME"
 
 echo "🚀 Deploying new WAR..."
-cp fileexplorer.war "$WEBAPPS_DIR/"
+cp $WAR_NAME "$WEBAPPS_DIR/"
 
 echo "🔁 Starting Tomcat..."
 $TOMCAT_HOME/bin/startup.sh
 
 echo "✅ Deployment complete!"
-echo "🌐 Access your app at: http://localhost:8081/fileexplorer/explorer"
+echo "🌐 Access your app at: http://localhost:8081/$APP_DIR_NAME/explorer"
 
