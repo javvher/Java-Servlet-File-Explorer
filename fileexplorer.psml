@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page>
+  <title>Explorateur de Fichiers</title>
+  <defaults layout-decorator="hrportal-nodecoration-page" portlet-decorator="hrportal-nodecoration-portlet"/>
+  <fragment id="file-explorer-direct-access" type="layout" name="jetspeed-layouts::VelocityOneColumn">
+      <fragment id="file-explorer-direct-access-0" type="portlet" name="hr-portlets::FileExplorerPortlet">
+        <property name="row" value="0"/>
+        <preference name="basePath">
+            <value>fichiers</value>
+        </preference>
+        <preference name="subDirectories">
+            <value>BulletinsDePaie,BandesDeVirements,rapports</value>
+        </preference>
+        <preference name="logoPath">
+            <value>logo.png</value>
+        </preference>
+        <preference name="defaultActiveTab">
+            <value>0</value>
+        </preference>
+        <preference name="enableDownload">
+            <value>true</value>
+        </preference>
+        <preference name="enableView">
+            <value>true</value>
+        </preference>
+        <preference name="fileEncoding">
+            <value>UTF-8</value>
+        </preference>
+      </fragment>
+  </fragment>
+</page>
